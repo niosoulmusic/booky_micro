@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes">
+
+    <title>iron-star-rating test</title>
+
+    <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+    <script src="../../web-component-tester/browser.js"></script>
+
+    <link rel="import" href="../iron-star-rating.html">
+  </head>
+  <body>
+
+    <test-fixture id="BasicTestFixture">
+      <template>
+        <iron-star-rating></iron-star-rating>
+      </template>
+    </test-fixture>
+
+    <test-fixture id="InitialValueTestFixture">
+      <template>
+        <iron-star-rating value="3"></iron-star-rating>
+      </template>
+    </test-fixture>
+
+    <test-fixture id="ReadonlyTestFixture">
+      <template>
+        <iron-star-rating readonly></iron-star-rating>
+      </template>
+    </test-fixture>
+
+    <script>
+      suite('iron-star-rating', function() {
+
+        test('instantiating the element with default properties works', function() {
+          var element = fixture('BasicTestFixture');
+          assert.equal(element.value, 0);
+          assert.equal(element.readonly, false);
+        });
+
+        test('setting a value on the element works', function() {
+          var element = fixture('InitialValueTestFixture');
+          assert.equal(element.value, 3);
+        });
+
+        test('setting readonly on the element works', function() {
+          var element = fixture('ReadonlyTestFixture');
+          assert.equal(element.readonly, true);
+        });
+
+      });
+    </script>
+
+  </body>
+</html>

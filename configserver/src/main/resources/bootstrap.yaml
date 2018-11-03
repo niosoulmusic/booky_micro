@@ -1,0 +1,22 @@
+spring:
+  application:
+    name: configserver
+  cloud:
+    config:
+      server:
+        native:
+          search-locations: classpath:/configs
+  rabbitmq:
+    username: 'admin'
+    password: 'password'
+    addresses: 192.168.124.142:5672
+  profiles:
+    active: "native"
+
+server.port: 8888
+
+management:
+  server:
+    port: 11111
+
+

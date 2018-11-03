@@ -1,0 +1,87 @@
+version: '2'
+
+#NOTE: THIS IS INTENDED TO BE RUN IN DEV WITH DEV PROFILE IN MOSTLY ALL SERVICES
+#      UNFORTUNATELY I HAD TO USE A DEBIAN VM WITH DOCKER SO PLEASE UPDATE DEV PROFILE
+#      CONFIG WITH PROPER ADDRESSES ON THE CONFIG SERVER
+services:
+  rabbitmq:
+    image: "rabbitmq:3.7-management"
+    restart: on-failure
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: "admin"
+      RABBITMQ_DEFAULT_PASS: "password"
+    volumes:
+      - ./rabbitmq:/var/lib/rabbitmq
+
+  zipkin:
+    image: openzipkin/zipkin
+    ports:
+      - "9410:9410"
+      - "9411:9411"
+    depends_on:
+      - rabbitmq
+    environment:
+      RABBIT_URI: "amqp://admin:password@rabbitmq:5672"
+    extends:
+      file: ./dc-common.yaml
+      service: common_java
+
+  redis:
+    image: "redis:alpine"
+    restart: on-failure
+    ports:
+      - "6379:6379"
+
+  redisCommander:
+    image: tenstartups/redis-commander
+    command: --redis-host redis
+    restart: on-failure
+    depends_on:
+      - redis
+    ports:
+      - "8081:8081"
+
+  mysqlbm:
+    image: mysql:8.0
+    restart: on-failure
+    security_opt:
+      - seccomp=unconfined
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_DATABASE: "booky"
+      MYSQL_USER: "admin"
+      MYSQL_PASSWORD: "password"
+      MYSQL_ROOT_HOST: "%"
+      MYSQL_ROOT_PASSWORD: "superDuperSecret"
+
+  mysqlus:
+    image: mysql:8.0
+    restart: on-failure
+    security_opt:
+       - seccomp=unconfined
+    ports:
+       - "3307:3306"
+    environment:
+       MYSQL_DATABASE: "users"
+       MYSQL_USER: "admin"
+       MYSQL_PASSWORD: "password"
+       MYSQL_ROOT_HOST: "%"
+       MYSQL_ROOT_PASSWORD: "superDuperSecret"
+
+  mysqlra:
+    image: mysql:8.0
+    restart: on-failure
+    security_opt:
+      - seccomp=unconfined
+    ports:
+      - "3308:3306"
+    environment:
+      MYSQL_DATABASE: "ratings"
+      MYSQL_USER: "admin"
+      MYSQL_PASSWORD: "password"
+      MYSQL_ROOT_HOST: "%"
+      MYSQL_ROOT_PASSWORD: "superDuperSecret"
